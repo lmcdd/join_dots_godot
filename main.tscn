@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+export(Color) var bg_color = \"#000000\"
+export(Color) var dots_color = \"#fcfcfc\"
+
+export(int) var dots_amount = 50
+
+var dots = []
+var h
+var w
+var img_tex
+
+
+func setup() -> void:
+	var i = 0
+	while i < dots_amount:
+		dots.append(Dot.new(w, h, dots_color))
+		i += 1
+
+
+func create_1px_tex(c: Color) -> ImageTexture:
+	var img = Image.new()
+	img.create(1, 1, false, Image.FORMAT_RGB8)
+	img.lock()
+	img.set_pixel(0, 0, c)
+	img.unlock()
+	var itex = ImageTexture.new()
+	itex.create_from_image(img)
+	return itex
+
+
+func set_bg_color() -> void:
+	VisualServer.set_default_clear_color(bg_color)
+	img_tex = create_1px_tex(bg_color)
+	VisualServer.black_bars_set_images(
+			img_tex.get_rid(), img_tex.get_rid(), 
+			img_tex.get_rid(), img_tex.get_rid())
+
+
+func _ready() -> void:
+	set_bg_color()
+	w = get_viewport_rect().size.x
+	h = get_viewport_rect().size.y
+	setup()
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	for d in dots:
+		d.update()
+		update()
+
+
+func _draw() -> void:
+	for d in dots:
+		draw_circle(Vector2(d.x, d.y), d.radius, d.color)
+		var i = 0
+		while i < dots.size():
+			var distance = Vector2(d.x, d.y).distance_to(Vector2(dots[i].x, dots[i].y))
+			var opacity = 1 - distance / d.opts.communication_r
+			if (opacity > 0):
+				var color = d.color #Color(dots_color)
+				color.a = opacity
+				draw_line(Vector2(d.x, d.y), Vector2(dots[i].x, dots[i].y), color, 0.5)
+			i += 1
+"
+
+[node name="Main" type="Node2D"]
+script = SubResource( 1 )
