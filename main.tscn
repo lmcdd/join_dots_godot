@@ -8,16 +8,16 @@ export(Color) var dots_color = \"#fcfcfc\"
 
 export(int) var dots_amount = 50
 
-var dots = []
-var h
-var w
-var img_tex
+var _dots = []
+var _h
+var _w
+var _img_tex
 
 
 func setup() -> void:
 	var i = 0
 	while i < dots_amount:
-		dots.append(Dot.new(w, h, dots_color))
+		_dots.append(Dot.new(_w, _h, dots_color))
 		i += 1
 
 
@@ -34,37 +34,37 @@ func create_1px_tex(c: Color) -> ImageTexture:
 
 func set_bg_color() -> void:
 	VisualServer.set_default_clear_color(bg_color)
-	img_tex = create_1px_tex(bg_color)
+	_img_tex = create_1px_tex(bg_color)
 	VisualServer.black_bars_set_images(
-			img_tex.get_rid(), img_tex.get_rid(), 
-			img_tex.get_rid(), img_tex.get_rid())
+			_img_tex.get_rid(), _img_tex.get_rid(), 
+			_img_tex.get_rid(), _img_tex.get_rid())
 
 
 func _ready() -> void:
 	set_bg_color()
-	w = get_viewport_rect().size.x
-	h = get_viewport_rect().size.y
+	_w = get_viewport_rect().size.x
+	_h = get_viewport_rect().size.y
 	setup()
 	set_process(true)
 
 
 func _process(delta: float) -> void:
-	for d in dots:
+	for d in _dots:
 		d.update()
 		update()
 
 
 func _draw() -> void:
-	for d in dots:
+	for d in _dots:
 		draw_circle(Vector2(d.x, d.y), d.radius, d.color)
 		var i = 0
-		while i < dots.size():
-			var distance = Vector2(d.x, d.y).distance_to(Vector2(dots[i].x, dots[i].y))
+		while i < _dots.size():
+			var distance = Vector2(d.x, d.y).distance_to(Vector2(_dots[i].x, _dots[i].y))
 			var opacity = 1 - distance / d.opts.communication_r
 			if (opacity > 0):
 				var color = d.color #Color(dots_color)
 				color.a = opacity
-				draw_line(Vector2(d.x, d.y), Vector2(dots[i].x, dots[i].y), color, 0.5)
+				draw_line(Vector2(d.x, d.y), Vector2(_dots[i].x, _dots[i].y), color, 0.5)
 			i += 1
 "
 

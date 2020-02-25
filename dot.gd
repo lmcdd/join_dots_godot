@@ -40,17 +40,15 @@ func border() -> void:
 
 	if(y >= h || y <= 0):
 		d.y *= -1
-		
+
 	if x > w:
 		x = w
-
+	elif x < 0: 
+		x = 0
+	
 	if y > h:
 		y = h 
-	
-	if x < 0: 
-		x = 0
-
-	if y < 0: 
+	elif y < 0: 
 		y = 0
 
 
